@@ -1,33 +1,31 @@
-.App {
-  text-align: center;
+@import "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css";
+
+.container {
+  margin-top: 4em;
+}
+.nav-container {
+  position: relative;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
+.search-field {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.tab-pane {
+  min-height: 10em;
+
+  margin-top: 1em;
+  padding: 1em;
 }
 
-.App-link {
-  color: #61dafb;
+.articles {
+  margin-top: 2em;
+  max-width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.article {
+  margin-bottom: 2em;
 }
