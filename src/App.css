@@ -7,11 +7,15 @@
   position: relative;
 }
 
-.search-field {
+/* .search-field {
   position: absolute;
   top: 50%;
   right: 0;
   transform: translateY(-50%);
+} */
+
+.search-field {
+  margin-left: 1.5em;
 }
 
 .tab-pane {
@@ -33,4 +37,10 @@
 .article-description {
   font-size: 0.9em;
   margin-top: 1.5em;
+}
+
+.searchMessage {
+  font-style: italic;
+  font-weight: 300;
+  margin-left: 0.25em;
 }

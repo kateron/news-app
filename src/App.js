@@ -51,7 +51,9 @@ class App extends Component {
       entertainmentArticles: [],
       searchedArticles: [],
       technologyArticles: [],
+      healthArticles: [],
       searchTerm: "",
+      searchMessage: "",
       activeKey: "business"
     };
   }
@@ -88,6 +90,11 @@ class App extends Component {
             technologyArticles: articles
           });
         }
+        if (category == "health") {
+          this.setState({
+            healthArticles: articles
+          });
+        }
       });
   };
 
@@ -104,8 +111,19 @@ class App extends Component {
         .then(data => {
           var articles = data.articles;
           this.setState({ searchedArticles: articles });
+          if (articles.length == 0) {
+            this.setState({
+              searchMessage: "No articles related to " + term
+            });
+          } else {
+            this.setState({
+              searchMessage: "Articles related to " + term
+            });
+          }
           // console.log(articles);
         });
+    } else {
+      this.setState({ searchMessage: "No results found" });
     }
   };
 
@@ -115,6 +133,7 @@ class App extends Component {
     this.loadHeadlinesByCategory("sport");
     this.loadHeadlinesByCategory("entertainment");
     this.loadHeadlinesByCategory("technology");
+    this.loadHeadlinesByCategory("health");
   }
 
   handleTabSelect = (key, e) => {
@@ -129,6 +148,7 @@ class App extends Component {
     e.preventDefault();
     this.setState({ activeKey: "search" });
     this.loadHeadlinesByTerm(this.state.searchTerm);
+    // this.setState({ searchTerm: "" });
   };
 
   render() {
@@ -139,7 +159,7 @@ class App extends Component {
             activeKey={this.state.activeKey}
             onSelect={this.handleTabSelect}>
             <div className='nav-container'>
-              <Nav variant='tabs'>
+              <Nav fill variant='tabs'>
                 <Nav.Item>
                   <Nav.Link eventKey='business'>business</Nav.Link>
                 </Nav.Item>
@@ -155,29 +175,33 @@ class App extends Component {
                 <Nav.Item>
                   <Nav.Link eventKey='technology'>technology</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey='health'>health</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <form inline className=' search-field'>
+                    <div className='input-group '>
+                      <input
+                        type='text'
+                        className='form-control form-control-sm'
+                        placeholder='Enter Keyword'
+                        aria-label="Recipient's username"
+                        aria-describedby='button-addon2'
+                        onChange={this.handleSearchInputChange}
+                      />
+                      <div className='input-group-append'>
+                        <button
+                          onClick={this.handleSearchSubmitClick}
+                          className='btn btn-outline-secondary btn-sm'
+                          type='submit'
+                          id='button-addon2'>
+                          search
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </Nav.Item>
               </Nav>
-
-              <form className='col-5 search-field'>
-                <div className='input-group mb-3'>
-                  <input
-                    type='text'
-                    className='form-control form-control-sm'
-                    placeholder='Enter Keyword'
-                    aria-label="Recipient's username"
-                    aria-describedby='button-addon2'
-                    onChange={this.handleSearchInputChange}
-                  />
-                  <div className='input-group-append'>
-                    <button
-                      onClick={this.handleSearchSubmitClick}
-                      className='btn btn-outline-secondary btn-sm'
-                      type='submit'
-                      id='button-addon2'>
-                      search
-                    </button>
-                  </div>
-                </div>
-              </form>
             </div>
 
             <Tab.Content>
@@ -236,8 +260,20 @@ class App extends Component {
                   })}
                 </CardColumns>
               </Tab.Pane>
+              <Tab.Pane className='tab-pane' eventKey='health'>
+                <h1>Health</h1>
+                <CardColumns className='articles'>
+                  {this.state.healthArticles.map(article => {
+                    var articleProps = {
+                      ...article
+                    };
+                    return <Article {...articleProps} />;
+                  })}
+                </CardColumns>
+              </Tab.Pane>
               <Tab.Pane className='tab-pane' eventKey='search'>
                 <h1>Search Results</h1>
+                <p className='searchMessage'>{this.state.searchMessage}</p>
                 <CardColumns className='articles'>
                   {this.state.searchedArticles.map(article => {
                     var articleProps = {
