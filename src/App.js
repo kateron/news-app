@@ -8,8 +8,8 @@ import Article from "./Article";
 // import Form from "react-bootstrap/Form";
 import "./App.css";
 
-var keyCode = 'ef9d052ad9fd45a190988d4af0f0feb1';
-var key = '?apiKey='+keyCode;
+var keyCode = "ef9d052ad9fd45a190988d4af0f0feb1";
+var key = "?apiKey=" + keyCode;
 
 class App extends Component {
   constructor(props) {
@@ -45,66 +45,99 @@ class App extends Component {
         //   publishedAt: "2019-08-12T00:40:13+00:00"
         // }
       ],
-      businessArticles:[], 
-      politicsArticles:[],
-      sportArticles:[],
-      searchedArticles: [], 
-      activeKey: 'business'
+      businessArticles: [],
+      politicsArticles: [],
+      sportArticles: [],
+      entertainmentArticles: [],
+      searchedArticles: [],
+      technologyArticles: [],
+      searchTerm: "",
+      activeKey: "business"
     };
   }
 
- loadHeadlinesByCategory = (category) => {
-    var articlesURL = 'https://newsapi.org/v2/top-headlines'+key+'&category='+category;
+  loadHeadlinesByCategory = category => {
+    var articlesURL =
+      "https://newsapi.org/v2/top-headlines" +
+      key +
+      "&category=" +
+      category +
+      "&sortBy=popularity" +
+      "&country=nz";
     fetch(articlesURL)
-      .then( res=>res.json())
-      .then((data)=>{
+      .then(res => res.json())
+      .then(data => {
         var articles = data.articles;
         // console.log(articles);
-        if(category=='business'){
-          this.setState({businessArticles:articles})
+        if (category == "business") {
+          this.setState({ businessArticles: articles });
         }
-        if(category=='politics'){
-          this.setState({politicsArticles:articles})
+        if (category == "politics") {
+          this.setState({ politicsArticles: articles });
         }
-        if(category=='sport'){
-          this.setState({sportArticles:articles})
+        if (category == "sport") {
+          this.setState({ sportArticles: articles });
         }
-        
-      })
-  }
+        if (category == "entertainment") {
+          this.setState({
+            entertainmentArticles: articles
+          });
+        }
+        if (category == "technology") {
+          this.setState({
+            technologyArticles: articles
+          });
+        }
+      });
+  };
 
-  loadHeadlinesByTerm = (term) => {
-    var articlesURL = 'https://newsapi.org/v2/top-headlines'+key+'&q='+term;
-    fetch(articlesURL)
-      .then( res=>res.json())
-      .then((data)=>{
-        var articles = data.articles;
-        this.setState()
-        // console.log(articles);
-      })
-  }
+  loadHeadlinesByTerm = term => {
+    if (term !== "") {
+      var articlesURL =
+        "https://newsapi.org/v2/top-headlines" +
+        key +
+        "&q=" +
+        term +
+        "&sortBy=popularity";
+      fetch(articlesURL)
+        .then(res => res.json())
+        .then(data => {
+          var articles = data.articles;
+          this.setState({ searchedArticles: articles });
+          // console.log(articles);
+        });
+    }
+  };
 
-  componentDidMount(){
-    this.loadHeadlinesByCategory('business');
-    this.loadHeadlinesByCategory('politics');
-    this.loadHeadlinesByCategory('sport');
+  componentDidMount() {
+    this.loadHeadlinesByCategory("business");
+    this.loadHeadlinesByCategory("politics");
+    this.loadHeadlinesByCategory("sport");
+    this.loadHeadlinesByCategory("entertainment");
+    this.loadHeadlinesByCategory("technology");
   }
 
   handleTabSelect = (key, e) => {
-    this.setState({activeKey:key});
-  }
+    this.setState({ activeKey: key });
+  };
 
-  handleSearchSubmitClick = (e) => {
+  handleSearchInputChange = e => {
+    this.setState({ searchTerm: e.target.value });
+  };
+
+  handleSearchSubmitClick = e => {
     e.preventDefault();
-    this.setState({activeKey:'search'})
-  }
-  
+    this.setState({ activeKey: "search" });
+    this.loadHeadlinesByTerm(this.state.searchTerm);
+  };
 
   render() {
     return (
       <div className='app'>
         <div className='container'>
-          <Tab.Container activeKey={this.state.activeKey} onSelect={this.handleTabSelect}>
+          <Tab.Container
+            activeKey={this.state.activeKey}
+            onSelect={this.handleTabSelect}>
             <div className='nav-container'>
               <Nav variant='tabs'>
                 <Nav.Item>
@@ -116,6 +149,12 @@ class App extends Component {
                 <Nav.Item>
                   <Nav.Link eventKey='sport'>sport</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey='entertainment'>entertainment</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey='technology'>technology</Nav.Link>
+                </Nav.Item>
               </Nav>
 
               <form className='col-5 search-field'>
@@ -126,9 +165,11 @@ class App extends Component {
                     placeholder='Enter Keyword'
                     aria-label="Recipient's username"
                     aria-describedby='button-addon2'
+                    onChange={this.handleSearchInputChange}
                   />
                   <div className='input-group-append'>
-                    <button onClick={this.handleSearchSubmitClick}
+                    <button
+                      onClick={this.handleSearchSubmitClick}
                       className='btn btn-outline-secondary btn-sm'
                       type='submit'
                       id='button-addon2'>
@@ -173,10 +214,32 @@ class App extends Component {
                   })}
                 </CardColumns>
               </Tab.Pane>
-              <Tab.Pane className="tab-pane" eventKey="search">
-              <h1>Business</h1>
+              <Tab.Pane className='tab-pane' eventKey='entertainment'>
+                <h1>Entertainment</h1>
                 <CardColumns className='articles'>
-                  {this.state.businessArticles.map(article => {
+                  {this.state.entertainmentArticles.map(article => {
+                    var articleProps = {
+                      ...article
+                    };
+                    return <Article {...articleProps} />;
+                  })}
+                </CardColumns>
+              </Tab.Pane>
+              <Tab.Pane className='tab-pane' eventKey='technology'>
+                <h1>Technology</h1>
+                <CardColumns className='articles'>
+                  {this.state.technologyArticles.map(article => {
+                    var articleProps = {
+                      ...article
+                    };
+                    return <Article {...articleProps} />;
+                  })}
+                </CardColumns>
+              </Tab.Pane>
+              <Tab.Pane className='tab-pane' eventKey='search'>
+                <h1>Search Results</h1>
+                <CardColumns className='articles'>
+                  {this.state.searchedArticles.map(article => {
                     var articleProps = {
                       ...article
                     };
